@@ -10,18 +10,24 @@ app = Flask(__name__)
 # -----------------------------
 # CONFIG (Environment Variables)
 # -----------------------------
-DATA_URL_ENV = "DATA_URL"        # Full URL (including SAS) OR public URL
-BLOB_URL_ENV = "BLOB_URL"        # Base blob URL without query
-SAS_TOKEN_ENV = "SAS_TOKEN"      # Token only (no leading ?)
+# Option A: DATA_URL = full URL (public OR SAS URL)
+# Option B: BLOB_URL + SAS_TOKEN (token only)
+DATA_URL_ENV = "DATA_URL"
+BLOB_URL_ENV = "BLOB_URL"
+SAS_TOKEN_ENV = "SAS_TOKEN"
 
+# Local fallback
 LOCAL_CSV_FILE = "data_sample.csv"
+
+# Increase a bit in case Azure is slow
+HTTP_TIMEOUT_SECS = 45
 
 
 # -----------------------------
 # HELPERS
 # -----------------------------
 def _download_text(url: str) -> str:
-    r = requests.get(url, timeout=30)
+    r = requests.get(url, timeout=HTTP_TIMEOUT_SECS)
     r.raise_for_status()
     return r.text
 
@@ -34,33 +40,43 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
 def _as_str(x):
     if x is None:
         return ""
-    s = str(x).strip()
-    # fix "123.0" issue from pandas floats
-    if s.endswith(".0") and s.replace(".0", "").isdigit():
-        s = s[:-2]
-    return s
+    return str(x).strip()
 
 
 def _as_int(x, default=0):
     try:
-        if x is None or (isinstance(x, float) and pd.isna(x)):
+        if x is None:
             return default
-        return int(float(x))
+        s = str(x).strip()
+        if s == "" or s.lower() in {"nan", "none", "null"}:
+            return default
+        return int(float(s))
     except Exception:
         return default
 
 
 def _as_float(x):
     try:
-        if x is None or (isinstance(x, float) and pd.isna(x)):
+        if x is None:
             return None
-        return float(x)
+        s = str(x).strip()
+        if s == "" or s.lower() in {"nan", "none", "null"}:
+            return None
+        return float(s)
     except Exception:
         return None
 
 
 def _safe_list(x):
-    if x is None or (isinstance(x, float) and pd.isna(x)):
+    """
+    CSV can store arrays as:
+    - empty / NaN
+    - "['a','b']"
+    - "a; b"
+    - "a, b"
+    We convert to list[str].
+    """
+    if x is None:
         return []
 
     s = str(x).strip()
@@ -84,12 +100,16 @@ def _safe_list(x):
 
 
 def _join_blob_and_token(blob_url: str, sas_token: str) -> str:
+    """
+    Build full URL:
+      full = blob_url + "?" + sas_token
+    Handles: token with/without leading '?', blob_url with/without existing query.
+    """
     blob_url = (blob_url or "").strip()
     sas_token = (sas_token or "").strip()
 
     if not blob_url:
         return ""
-
     if not sas_token:
         return blob_url
 
@@ -102,6 +122,28 @@ def _join_blob_and_token(blob_url: str, sas_token: str) -> str:
         return blob_url + "&" + sas_token
 
     return blob_url + "?" + sas_token
+
+
+def _read_csv_from_text(csv_text: str) -> pd.DataFrame:
+    """
+    Critical fix:
+    - Force dtype=str so listing_id doesn't become float/scientific notation.
+    """
+    return pd.read_csv(StringIO(csv_text), dtype=str)
+
+
+def _clean_id_columns(df: pd.DataFrame) -> pd.DataFrame:
+    # Ensure IDs exist as clean strings (prevents "Listing not found")
+    if "listing_id" in df.columns:
+        df["listing_id"] = df["listing_id"].astype(str).str.strip()
+        # treat blanks as missing
+        df.loc[df["listing_id"].isin(["", "nan", "None", "null"]), "listing_id"] = None
+
+    if "seller_id" in df.columns:
+        df["seller_id"] = df["seller_id"].astype(str).str.strip()
+        df.loc[df["seller_id"].isin(["", "nan", "None", "null"]), "seller_id"] = None
+
+    return df
 
 
 # -----------------------------
@@ -118,8 +160,10 @@ def high_rated_banner(country: str, high_rated: int):
     return {
         "type": "info",
         "title": "ℹ️ Insight",
-        "message": f"There are listings rated higher than yours in {country}. "
-                   f"Below are actionable suggestions to help you improve."
+        "message": (
+            f"There are listings rated higher than yours in {country}. "
+            f"Below are actionable suggestions to help you improve."
+        )
     }
 
 
@@ -129,6 +173,7 @@ def description_explain(score):
         return {"value": "N/A", "label": "Not available",
                 "text": "Description score is not available for this listing."}
 
+    # assumed 0..100
     if s >= 80:
         label = "High"
         text = "Your description is clear, well-structured, and informative."
@@ -148,6 +193,7 @@ def centrality_explain(score):
         return {"value": "N/A", "label": "Not available",
                 "text": "Centrality score is not available for this listing."}
 
+    # assumed normalized 0..1
     if s >= 0.70:
         label = "High"
         text = "Your listing is in a very central area."
@@ -191,8 +237,10 @@ def build_suggestions(rec: dict):
         items.append({"title": "Improve location appeal (landmarks)", "list": out})
 
     if not items:
-        items.append({"title": "No major issues detected",
-                      "list": ["Your listing looks good! Consider small refinements to stay competitive."]})
+        items.append({
+            "title": "No major issues detected",
+            "list": ["Your listing looks good! Consider small refinements to stay competitive."]
+        })
 
     return items
 
@@ -207,15 +255,15 @@ def load_records_from_csv():
 
     if data_url:
         url = data_url
-        source = f"url: {url}"
+        source = "data_url"
         csv_text = _download_text(url)
-        df = pd.read_csv(StringIO(csv_text))
+        df = _read_csv_from_text(csv_text)
     else:
         url2 = _join_blob_and_token(blob_url, sas_token)
         if url2:
-            source = f"url: {url2}"
+            source = "blob_url+sas_token"
             csv_text = _download_text(url2)
-            df = pd.read_csv(StringIO(csv_text))
+            df = _read_csv_from_text(csv_text)
         else:
             if not os.path.exists(LOCAL_CSV_FILE):
                 raise RuntimeError(
@@ -224,15 +272,17 @@ def load_records_from_csv():
                     f"- Set env vars {BLOB_URL_ENV} and {SAS_TOKEN_ENV}, OR\n"
                     f"- Put {LOCAL_CSV_FILE} next to app.py for local testing."
                 )
-            source = f"local: {LOCAL_CSV_FILE}"
-            df = pd.read_csv(LOCAL_CSV_FILE)
+            source = "local_file"
+            df = pd.read_csv(LOCAL_CSV_FILE, dtype=str)
 
     df = _normalize_columns(df)
     df = df.where(pd.notnull(df), None)
+    df = _clean_id_columns(df)
 
     if "listing_id" not in df.columns:
-        raise RuntimeError(f"CSV missing required column 'listing_id' ({source}). Columns: {list(df.columns)}")
+        raise RuntimeError(f"CSV missing required column 'listing_id'. Columns: {list(df.columns)}")
 
+    # index by listing_id (string-safe)
     indexed = {}
     for rec in df.to_dict(orient="records"):
         listing_id = _as_str(rec.get("listing_id"))
@@ -240,7 +290,7 @@ def load_records_from_csv():
             indexed[listing_id] = rec
 
     if not indexed:
-        raise RuntimeError(f"Loaded CSV has 0 valid listing_id rows ({source}).")
+        raise RuntimeError("Loaded CSV has 0 valid listing_id rows.")
 
     return indexed, source
 
@@ -266,13 +316,19 @@ def analyze():
 
     rec = records_by_listing.get(listing_id)
     if not rec:
-        return render_template("index.html", result=None,
-                               error=f"Listing ID '{listing_id}' was not found in the sample data.")
+        return render_template(
+            "index.html",
+            result=None,
+            error=f"Listing ID '{listing_id}' was not found in the sample data."
+        )
 
     expected_seller = _as_str(rec.get("seller_id"))
     if seller_id and expected_seller and seller_id != expected_seller:
-        return render_template("index.html", result=None,
-                               error=f"Seller ID does not match this listing. Expected Seller ID: {expected_seller}")
+        return render_template(
+            "index.html",
+            result=None,
+            error=f"Seller ID does not match this listing. Expected Seller ID: {expected_seller}"
+        )
 
     country = _as_str(rec.get("country"))
     high_rated = _as_int(rec.get("high_rated"), default=0)
@@ -282,8 +338,10 @@ def analyze():
         "listing_id": listing_id,
         "country": country,
         "banner": high_rated_banner(country, high_rated),
+
         "description": description_explain(rec.get("description_score")),
         "centrality": centrality_explain(rec.get("centrality_score_sel")),
+
         "suggestions": build_suggestions(rec),
     }
 
@@ -295,7 +353,9 @@ def health():
     return jsonify({
         "status": "ok",
         "records_loaded": len(records_by_listing),
-        "data_source": data_source
+        "data_source": data_source,
+        # helpful sanity check: shows you that IDs are normal strings (not scientific notation)
+        "sample_listing_ids": list(records_by_listing.keys())[:5],
     })
 
 
