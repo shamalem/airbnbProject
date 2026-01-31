@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Airbnb Quality Fixer — Host Recommendations</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:rgba(255,255,255,.05);
+      --border:rgba(148,163,184,.18);
+      --text:#e5e7eb;
+      --muted:#a3b3c9;
+      --accent:#38bdf8;
+      --good:#22c55e;
+      --info:#f59e0b;
+      --danger:#ef4444;
+    }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 800px at 20% 0%, #0b2a4a 0%, #0b1220 50%, #050a14 100%);
+      color:var(--text);
+    }
+    .wrap{max-width:980px;margin:28px auto;padding:0 16px;}
+    .top{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .brand{display:flex;gap:12px;align-items:center;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      box-shadow: 0 12px 35px rgba(56,189,248,.18);
+    }
+    h1{font-size:20px;margin:0;}
+    .sub{margin:3px 0 0 0;font-size:13px;color:var(--muted);}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);font-size:12px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      margin:12px 0;
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+    input{
+      width:240px;max-width:100%;
+      background:rgba(15,23,42,.65);
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+    }
+    input:focus{border-color:rgba(56,189,248,.6); box-shadow:0 0 0 3px rgba(56,189,248,.12)}
+    button{
+      border:none;
+      border-radius:12px;
+      padding:11px 14px;
+      font-weight:700;
+      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      color:#071019;
+      cursor:pointer;
+    }
+    button:hover{filter:brightness(1.03)}
+    .hint{font-size:12px;color:var(--muted);margin-top:10px}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:840px){.grid{grid-template-columns: 1.05fr .95fr}}
+
+    .banner{
+      border-radius:14px;padding:14px;border:1px solid var(--border);
+      background: rgba(34,197,94,.10);
+    }
+    .banner.info{background: rgba(245,158,11,.10)}
+    .banner h3{margin:0 0 6px 0;font-size:14px}
+    .banner p{margin:0;color:var(--text)}
+    .error{
+      border-radius:14px;padding:12px;border:1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+      color:#fecaca;
+    }
+
+    .kv{display:flex;gap:10px;flex-wrap:wrap}
+    .k{
+      flex:1;min-width:220px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(15,23,42,.35);
+    }
+    .k .t{color:var(--muted);font-size:12px;margin-bottom:6px}
+    .k .v{font-size:18px;font-weight:800}
+    .k .d{color:var(--muted);font-size:12px;margin-top:6px}
+
+    .section-title{margin:0 0 8px 0;font-size:14px;color:#cbd5e1}
+    details{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(2,6,23,.32);
+    }
+    summary{
+      cursor:pointer;
+      font-weight:800;
+      color: var(--text);
+      list-style:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    .action{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:14px;padding:12px;
+      background: rgba(2,6,23,.30);
+    }
+    .action b{display:block;margin-bottom:8px}
+    ul{margin:0;padding-left:18px;color:#e2e8f0}
+    li{margin:7px 0}
+    .foot{color:var(--muted);font-size:12px;margin-top:10px}
+    .tag{
+      display:inline-flex;align-items:center;
+      padding:4px 9px;border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);font-size:12px;
+      background: rgba(255,255,255,.02);
+      margin-left:8px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>Airbnb Quality Fixer — Host Report</h1>
+        <p class="sub">Enter a Listing ID (required) + Seller ID (optional validation) to view insights.</p>
+      </div>
+    </div>
+    <div class="pill">Demo • Sample output • Privacy-safe</div>
+  </div>
+
+  <!-- FORM (always visible) -->
+  <div class="card">
+    <form method="POST" action="/" class="row">
+      <div>
+        <label>Seller ID (optional)</label>
+        <input name="seller_id" placeholder="Used to validate ownership" />
+      </div>
+      <div>
+        <label>Listing ID (required)</label>
+        <input name="listing_id" placeholder="Enter a Listing ID from the sample" required />
+      </div>
+      <div>
+        <button type="submit">Analyze Listing</button>
+      </div>
+    </form>
+    <div class="hint">Results appear only after you click <b>Analyze Listing</b>.</div>
+  </div>
+
+  {% if error %}
+    <div class="card">
+      <div class="error">⚠️ {{ error }}</div>
+    </div>
+  {% endif %}
+
+  {% if result %}
+    <div class="grid">
+
+      <!-- LEFT: summary + scores -->
+      <div class="card">
+        {% if result.banner.type == "good" %}
+          <div class="banner">
+            <h3>{{ result.banner.title }}</h3>
+            <p>{{ result.banner.message }}</p>
+          </div>
+        {% else %}
+          <div class="banner info">
+            <h3>{{ result.banner.title }}</h3>
+            <p>{{ result.banner.message }}</p>
+          </div>
+        {% endif %}
+
+        <div style="height:12px"></div>
+
+        <div class="kv">
+          <div class="k">
+            <div class="t">Listing</div>
+            <div class="v">{{ result.listing_id }}</div>
+            <div class="d">Country: {{ result.country }}</div>
+          </div>
+
+          <div class="k">
+            <div class="t">Seller (Host)</div>
+            <div class="v">{{ result.seller_id }}</div>
+            <div class="d">Shown only to validate ownership (no personal identity).</div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="k">
+          <div class="t">📝 Description Quality <span class="tag">{{ result.description.label }}</span></div>
+          <div class="v">{{ result.description.value }}</div>
+          <div class="d">{{ result.description.text }}</div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="k">
+          <div class="t">📍 Centrality <span class="tag">{{ result.centrality.label }}</span></div>
+          <div class="v">{{ result.centrality.value }}</div>
+          <div class="d">{{ result.centrality.text }}</div>
+        </div>
+
+        <div class="foot">
+          We suggest several improvements below. These recommendations come from the exported final output (sample).
+        </div>
+      </div>
+
+      <!-- RIGHT: suggestions (click to expand) -->
+      <div class="card">
+        <p class="section-title">Actionable suggestions</p>
+
+        {% if result.suggestions and result.suggestions|length > 0 %}
+          <details>
+            <summary>Click to view suggestions</summary>
+
+            {% for s in result.suggestions %}
+              <div class="action">
+                <b>{{ s.title }}</b>
+                <ul>
+                  {% for it in s.list %}
+                    <li>{{ it }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+
+          </details>
+        {% else %}
+          <div class="action">
+            <b>✅ No major suggestions found</b>
+            <div class="foot">Your listing looks strong based on our checks in this sample.</div>
+          </div>
+        {% endif %}
+
+        <div class="foot">
+          Tip: Use the Listing ID from the sample file. If Seller ID is provided, we validate it matches the listing.
+        </div>
+      </div>
+
+    </div>
+  {% endif %}
+
+</div>
+</body>
+</html>
