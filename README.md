@@ -1,4 +1,13 @@
+## Project Overview
 
+This project implements a scalable data science pipeline for analyzing Airbnb
+listings and generating **actionable quality-improvement recommendations** for hosts.
+
+Using large-scale data processed in **Databricks with Apache Spark**, we engineer
+textual and location-based features to predict whether a listing is likely to be
+**high-rated**, and provide **interpretable suggestions** to improve listing quality.
+A lightweight web interface is included to demonstrate precomputed results on a
+sampled dataset.
 ## How to Run
 
 ### Prerequisites
@@ -43,15 +52,15 @@ inputs are guaranteed to exist in the data sample used by the demo.
 
 ### Example Listings
 
-**Input 1 — High-rated listing (Germany)**
+**Input 1 — 
 - `seller_id`: 541773287  
 - `listing_id`: 1001884630305047646
 
-**Input 2 — High-rated listing with minimal recommendations**
+**Input 2 — 
 - `seller_id`: 51508411  
 - `listing_id`: 10033310
 
-**Input 3 — Different seller with a large listing ID**
+**Input 3 —
 - `seller_id`: 13471111  
 - `listing_id`: 1081595343647099000
 
@@ -69,7 +78,7 @@ A small pre-generated data sample used by the interface is stored in the
 - **Directory:** A folder named after the project group (`Aml_Sham_Nada`)  
 - **Contents:** A limited sample derived from the final Databricks output
 
-This sample is provided **only for interface demonstration purposes**.
+This sample is provided **only for interface demonstration purposes and visualizations**.
 All large-scale processing and model training are performed offline in
 Databricks.
 
