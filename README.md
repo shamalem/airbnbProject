@@ -1,6 +1,5 @@
 
 ---
-
 ## How to Run
 
 ### Prerequisites
@@ -8,13 +7,16 @@
 - An active Databricks Spark cluster (any standard configuration)
 
 ### Databricks Pipeline
-1. Import the notebook into a Databricks workspace.
-2. Attach the notebook to **any running Spark cluster**.
+The full data processing and scoring pipeline is implemented in the notebook
+located at:
+
+`notebooks/airbnb_quality_fixer.dbc`
+
+#### Steps
+1. Import the notebook (`notebooks/airbnb_quality_fixer.dbc`) into a Databricks workspace.
+2. Attach the notebook to any running Spark cluster.
 3. Configure data access paths as documented inside the notebook.
 4. Run the notebook cells sequentially from top to bottom.
-
-The notebook performs all feature engineering, scoring, and recommendation
-generation steps.
 
 > **Note on Data Access**  
 > Due to data licensing and usage restrictions, the Airbnb / Booking.com datasets
