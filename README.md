@@ -13,13 +13,13 @@ located at:
 `notebooks/airbnb_quality_fixer.dbc`
 
 #### Steps
-1. Import the notebook (`notebooks/airbnb_quality_fixer.dbc`) into a Databricks workspace.
+1. Import the notebook (`notebooks/airbnb_quality_fixer.ipynb`) into a Databricks workspace.
 2. Attach the notebook to any running Spark cluster.
 3. Configure data access paths as documented inside the notebook.
 4. Run the notebook cells sequentially from top to bottom.
 
 > **Note on Data Access**  
-> Due to data licensing and usage restrictions, the Airbnb / Booking.com datasets
+> Due to data licensing and usage restrictions, the Airbnb datasets
 > are **not included** in this repository.  
 > Data loading is intentionally excluded and must be configured by the user
 > in their own Databricks environment.
