@@ -65,12 +65,25 @@ A small data sample used by the interface is stored in the **course Azure
 storage container**, as required by the assignment instructions.
 
 - Location: Azure Blob Storage → `submissions` container
-- Directory: A folder named after the project group (as defined on Moodle)
+- Directory: A folder named after the project group "Aml_Sham_Nada".
 - Contents: A limited, pre-generated sample derived from the project output
 
 This sample is provided **only for interface demonstration purposes**.
 All raw scraped or external datasets used in the project appear in this
 directory, with informative filenames.
+##  Deployment
+- **HTML interface design** can be found under the `templates/` directory  
+  (`index.html`), which defines the user-facing layout of the demo interface.
+
+- **Backend and deployment logic** is implemented in `app.py`, which serves the
+  interface and loads a sampled output dataset to demonstrate the system behavior.
+
+- The application is configured for deployment using the included `Procfile`
+  and `requirements.txt`.
+
+> Note: The interface is intended as a **demonstration layer** that presents
+> precomputed recommendations generated offline in Databricks.  
+> Model training and large-scale data processing are not executed at runtime.
 
 > **Note:**  
 > The GitHub repository does not include any Airbnb .
