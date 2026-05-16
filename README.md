@@ -94,7 +94,7 @@ airbnb-quality-fixer/
 ├── templates/
 │   └── index.html
 │
-├── interface-screenshots/
+├── interface-preview/
 │   └── homepage.jpeg
 │
 ├── app.py
@@ -143,7 +143,7 @@ To document the implemented system and user flow, screenshots of the interface a
 
 ### Host Report Dashboard
 
-![Host Report Dashboard](interface-screenshots/homepage.jpeg)
+![Host Report Dashboard](interface-preview/homepage.jpeg)
 
 The interface allows hosts to:
 - Analyze listing quality
