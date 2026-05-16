@@ -1,106 +1,183 @@
+# Airbnb Quality Fixer
+
+A scalable data-driven system that analyzes Airbnb listings and generates actionable recommendations to help hosts improve listing quality, visibility, and booking potential.
+
+---
+
 ## Project Overview
 
-This project implements a scalable data science pipeline for analyzing Airbnb
-listings and generating **actionable quality-improvement recommendations** for hosts.
+Airbnb Quality Fixer is a large-scale data science and machine learning project designed to help Airbnb hosts better understand and improve how their listings are presented.
 
-Using large-scale data processed in **Databricks with Apache Spark**, we engineer
-textual and location-based features to predict whether a listing is likely to be
-**high-rated**, and provide **interpretable suggestions** to improve listing quality.
-A lightweight web interface is included to demonstrate precomputed results on a
-sampled dataset.
-## How to Run
+Built using Apache Spark and Databricks, the system analyzes listing descriptions, quality indicators, and location-based signals to identify patterns associated with highly rated listings. Based on this analysis, the system generates interpretable recommendations that can help improve listing presentation and overall quality.
 
-### Prerequisites
-- A Databricks workspace
-- An active Databricks Spark cluster (any standard configuration)
+The project also includes a lightweight Flask-based interface for exploring precomputed recommendations and listing analysis results.
 
-### Databricks Pipeline
-The full data processing, feature engineering, and scoring pipeline is
-implemented in the notebook located at:
+---
 
-`notebooks/airbnb_quality_fixer.ipynb`
+## Key Features
+
+- Large-scale Airbnb listing analysis using Spark
+- Text quality and description scoring
+- Location and landmark-based feature engineering
+- High-rated listing prediction
+- Actionable recommendation generation
+- Interactive interface for browsing analysis results
+- Offline precomputed recommendation pipeline
+
+---
+
+## Technologies
+
+- Python
+- Apache Spark
+- Databricks
+- Flask
+- Machine Learning
+- Azure Blob Storage
+- Pandas
+- Scikit-learn
+
+---
+
+## System Architecture
+
+The system consists of three main components:
+
+1. **Data Processing Pipeline**
+   - Large-scale preprocessing and feature engineering using Spark in Databricks
+
+2. **Recommendation & Scoring Engine**
+   - Generates listing quality scores and actionable recommendations
+
+3. **Flask Interface**
+   - Displays precomputed analysis results and recommendations through a lightweight web interface
+
+---
+
+## Project Structure
+
+```text
+airbnb-quality-fixer/
+│
+├── notebooks/
+│   └── airbnb_quality_fixer.ipynb
+│
+├── templates/
+│   └── index.html
+│
+├── screenshots/
+│   ├── homepage.png
+│   ├── listing-analysis.png
+│   ├── recommendations.png
+│   └── score-visualization.png
+│
+├── app.py
+├── requirements.txt
+├── Procfile
+└── README.md
+```
+
+---
+
+## Databricks Pipeline
+
+The full data processing, feature engineering, and scoring pipeline is implemented in:
+
+```text
+notebooks/airbnb_quality_fixer.ipynb
+```
+
+### Running the Pipeline
+
+#### Prerequisites
+
+- Databricks workspace
+- Active Spark cluster
 
 #### Steps
-1. Import the notebook into a Databricks workspace.
-2. Attach the notebook to any running Spark cluster.
-3. Configure data access paths as documented inside the notebook.
-4. Run the notebook cells sequentially from top to bottom.
 
-> **Note on Data Access**  
-> Due to data licensing and usage restrictions, the Airbnb datasets are  
-> **not included** in this repository.  
-> Data loading is intentionally excluded and must be configured by the user
-> in their own Databricks environment.
+1. Import the notebook into Databricks
+2. Attach the notebook to a running Spark cluster
+3. Configure data access paths
+4. Run the notebook sequentially
 
 ---
 
-## Interface (Live Demo)
+## Interface Preview
 
-The project includes a lightweight web interface for exploring the generated
-recommendations.
+The project originally included a Flask-based interface deployed on Render for exploring generated recommendations and listing analysis results.
 
-The interface is **already deployed** and can be accessed directly at:
+The interface depended on course-provided cloud resources and Azure Blob Storage used during the academic project lifecycle. Since these resources are no longer active, the live deployment is currently unavailable.
 
-👉 https://airbnbproject-final.onrender.com
-
----
-
-## Interface Sample Inputs
-
-To help reviewers quickly explore the interface, the following example
-inputs are guaranteed to exist in the data sample used by the demo.
-
-### Example Listings
-
-**Input 1 — 
-- `seller_id`: 541773287  
-- `listing_id`: 1001884630305047646
-
-**Input 2 — 
-- `seller_id`: 51508411  
-- `listing_id`: 10033310
-
-**Input 3 —
-- `seller_id`: 13471111  
-- `listing_id`: 1081595343647099000
-
-These inputs can be entered directly into the deployed interface to
-inspect different recommendation behaviors.
+To document the implemented system and user flow, screenshots of the interface are included below.
 
 ---
 
-## Data Sample for Interface
+## Interface Screenshots
 
-A small pre-generated data sample used by the interface is stored in the
-**course Azure storage container**, as required by the assignment instructions.
+### Homepage
 
-- **Location:** Azure Blob Storage → `submissions` container  
-- **Directory:** A folder named after the project group (`Aml_Sham_Nada`)  
-- **Contents:** A limited sample derived from the final Databricks output
+![Homepage](screenshots/homepage.png)
 
-This sample is provided **only for interface demonstration purposes and visualizations**.
-All large-scale processing and model training are performed offline in
-Databricks.
+### Listing Analysis
+
+![Listing Analysis](screenshots/listing-analysis.png)
+
+### Recommendations
+
+![Recommendations](screenshots/recommendations.png)
+
+### Score Visualization
+
+![Score Visualization](screenshots/score-visualization.png)
 
 ---
 
-## Deployment & Repository Structure
+## Sample Inputs
 
-- **HTML interface design** is located under the `templates/` directory  
-  (`index.html`), which defines the user-facing layout of the demo interface.
+The following example listing IDs were included in the demonstration dataset used by the interface.
 
-- **Backend and deployment logic** is implemented in `app.py`, which serves the
-  interface and loads a sampled output dataset to demonstrate the system behavior.
+### Example 1
 
-- The application is configured for deployment using the included
-  `Procfile` and `requirements.txt`.
+- seller_id: `541773287`
+- listing_id: `1001884630305047646`
 
-> **Important:**  
-> The interface is intended as a **demonstration layer** that presents
-> **precomputed recommendations** generated offline in Databricks.  
-> Model training and large-scale data processing are **not executed at runtime**.
+### Example 2
 
-> **Data Availability Note:**  
-> The GitHub repository does **not** include raw Airbnb datasets.
-> All data access is handled exclusively through the course-provided
-> Azure storage environment.
+- seller_id: `51508411`
+- listing_id: `10033310`
+
+### Example 3
+
+- seller_id: `13471111`
+- listing_id: `1081595343647099000`
+
+---
+
+## Data Availability
+
+The original Airbnb datasets are not included in this repository due to licensing and course-related storage restrictions.
+
+All large-scale processing and model training were executed offline in Databricks using course-provided Azure storage resources.
+
+The repository focuses on:
+- pipeline implementation
+- feature engineering
+- recommendation logic
+- interface implementation
+- system architecture
+
+---
+
+## Important Notes
+
+- The interface serves as a demonstration layer for precomputed recommendations
+- Model training and Spark processing are not executed at runtime
+- The deployment infrastructure originally relied on temporary academic cloud resources
+
+---
+
+## Authors
+
+- Sham Alem
+- Team Project
