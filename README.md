@@ -21,7 +21,8 @@ The project also includes a lightweight Flask-based interface for exploring prec
 - Location and landmark-based feature engineering
 - High-rated listing prediction
 - Actionable recommendation generation
-- Interactive interface for browsing analysis results
+- Interactive Flask-based interface
+- Responsive dark-themed dashboard
 - Offline precomputed recommendation pipeline
 
 ---
@@ -36,6 +37,20 @@ The project also includes a lightweight Flask-based interface for exploring prec
 - Azure Blob Storage
 - Pandas
 - Scikit-learn
+
+---
+
+## Skills Demonstrated
+
+- Distributed data processing
+- Feature engineering
+- Machine learning workflows
+- Recommendation systems
+- Backend development
+- Cloud-based data pipelines
+- Data visualization
+- System design
+- Scalable analytics
 
 ---
 
@@ -54,6 +69,20 @@ The system consists of three main components:
 
 ---
 
+## Results
+
+The system successfully generated interpretable recommendation outputs and listing quality scores using large-scale Airbnb listing data processed in Databricks.
+
+Key outcomes included:
+- Identification of features associated with highly rated listings
+- Automated quality scoring for listing descriptions
+- Landmark and location-aware recommendation generation
+- Host-facing actionable feedback for improving listing presentation
+
+The project also included visual analysis and evaluation of engineered features and model behavior.
+
+---
+
 ## Project Structure
 
 ```text
@@ -65,11 +94,8 @@ airbnb-quality-fixer/
 ├── templates/
 │   └── index.html
 │
-├── screenshots/
-│   ├── homepage.png
-│   ├── listing-analysis.png
-│   ├── recommendations.png
-│   └── score-visualization.png
+├── interface-screenshots/
+│   └── homepage.jpeg
 │
 ├── app.py
 ├── requirements.txt
@@ -115,21 +141,16 @@ To document the implemented system and user flow, screenshots of the interface a
 
 ## Interface Screenshots
 
-### Homepage
+### Host Report Dashboard
 
-![Homepage](screenshots/homepage.png)
+![Host Report Dashboard](interface-screenshots/homepage.jpeg)
 
-### Listing Analysis
-
-![Listing Analysis](screenshots/listing-analysis.png)
-
-### Recommendations
-
-![Recommendations](screenshots/recommendations.png)
-
-### Score Visualization
-
-![Score Visualization](screenshots/score-visualization.png)
+The interface allows hosts to:
+- Analyze listing quality
+- View description quality scores
+- Explore actionable recommendations
+- Identify missing amenities and phrases
+- Receive interpretable feedback based on highly rated listings
 
 ---
 
@@ -177,7 +198,10 @@ The repository focuses on:
 
 ---
 
-## Authors
+## Team
+
+Developed collaboratively as part of a university data science project.
+
+### Authors
 
 - Sham Alem
-- Team Project
